@@ -1,26 +1,31 @@
-var http = require("http");
-var fs = require("fs");
+const express=require("express");
+const app=express();
 
-var server = http.createServer((req, res) => {
+app.set("view engine","ejs");
+app.use(express.static('public'));
+app.use(express.static('node_modules'));
 
-    if (req.url = "/") {
-        fs.readFile("index.html", (err, html) => {
-            res.write(html);   
-            res.end();         
-        });
-        
-    }
-    else {
-        fs.readFile("urunler.html", (err, html) => {
-            res.write(html);    
-            res.end();        
-        });
-    }
 
-   
+const data=[
+    {id:1,name:"iphone 14",price:3000,isActive:true,imageUrl:'work2.jpg'},
+    {id:2,name:"iphone 15",price:4000,isActive:true,imageUrl:'work3.jpg'},
+    {id:3,name:"iphone 16",price:5000,isActive:true,imageUrl:'work4.jpg'},
+]
+app.use("/products/:id",function(req,res){
+    const urun=data.find(u=>u.id==req.params.id);
+    res.render("product_details",urun);
+});
+app.use("/products",function(req,res){
+    
+    res.render("products",{
+        urunler:data
+    })
 });
 
-server.listen(3000, () => {
-    console.log("node.js server at port 3000");
+app.use("/",function(req,res){
+    res.render("index");
+});
+app.listen(3000,()=>{
+    console.log("listenin on port 3000");
 });
 
